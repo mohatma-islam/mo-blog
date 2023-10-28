@@ -2,6 +2,12 @@ import React from "react";
 import style from "./page.module.css";
 import Image from "next/image";
 import Button from "@/component/Button/Button";
+
+export const metadata = {
+  title: "Mo Blog - Content Page",
+  description: "This is content page",
+};
+
 const Contact = () => {
   return (
     <div className={style.container}>

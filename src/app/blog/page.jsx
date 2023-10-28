@@ -1,14 +1,35 @@
-import React from 'react'
+import React from "react";
 import style from "./page.module.css";
-import Link from 'next/link';
-import Image from 'next/image';
-const Blog = () => {
+import Link from "next/link";
+import Image from "next/image";
+
+async function getData() {
+  const res = await fetch("http://localhost:3000/api/posts", {
+    cache: "no-cache",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
+
+const Blog = async () => {
+  const data = await getData();
+
+
   return (
     <div className={style.mainContainer}>
-        <Link href="/blog/test1" className={style.container}>
+      {data.map((item) => (
+        <Link
+          href={`blog/${item._id}`}
+          className={style.container}
+          key={item._id}
+        >
           <div className={style.imageContainer}>
             <Image
-              src="https://images.pexels.com/photos/2103127/pexels-photo-2103127.jpeg"
+              src={item.img}
               alt=""
               width={400}
               height={250}
@@ -16,12 +37,13 @@ const Blog = () => {
             />
           </div>
           <div className={style.content}>
-            <h1 className={style.title}>Test title</h1>
-            <p className={style.desc}>Test description</p>
+            <h1 className={style.title}>{item.title}</h1>
+            <p className={style.desc}>{item.body}</p>
           </div>
         </Link>
+      ))}
     </div>
-  )
-}
+  );
+};
 
 export default Blog;
