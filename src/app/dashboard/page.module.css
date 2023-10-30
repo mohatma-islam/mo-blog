@@ -28,6 +28,16 @@
     cursor: pointer;
     color: red;
   }
+
+  .update {
+    cursor: pointer;
+    color: #53c28b;
+    padding: 5px;
+    background-color: transparent;
+    border-color: #53c28b;
+    border: 2px;
+    border-radius: 5px;
+  }
   
   .new {
     flex: 1;

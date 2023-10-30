@@ -29,3 +29,21 @@ export const DELETE = async (request, { params }) => {
     return new NextResponse(error.message, { status: 500 });
   }
 };
+
+export const PUT = async (request, { params }) => {
+  const { id } = params;
+
+  const body = await request.json();
+
+  try {
+    await connect();
+    const updatedPost = await Post.findByIdAndUpdate(id, body, { new: true });
+    if (!updatedPost) {
+      return new NextResponse("Post not found!", { status: 404 });
+    }
+    return new NextResponse("Post updated!", { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return new NextResponse("Error updating post!", { status: 500 });
+  }
+};

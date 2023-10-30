@@ -31,6 +31,7 @@ const Dashboard = () => {
 
   const handleSubmit = async (e) => {
     console.log(e);
+    console.log('Post ID: ' + postData._id);
     e.preventDefault();
     const title = e.target[0].value;
     const desc = e.target[1].value;
@@ -42,9 +43,12 @@ const Dashboard = () => {
     console.log(img);
     console.log(content);
 
+    const url = postData ? `/api/posts/${postData._id}` : "/api/posts";
+    const method = postData ? "PUT" : "POST";
+
     try {
-      await fetch("/api/posts", {
-        method: "POST",
+      await fetch(url, {
+        method: method,
         body: JSON.stringify({
           title,
           desc,
@@ -54,6 +58,7 @@ const Dashboard = () => {
         }),
       });
       mutate();
+      setPostData(null); // reset postData after submit
       e.target.reset();
     } catch (error) {
       console.log(error.message);
@@ -71,7 +76,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpdate = async (id) =>{
+  const handleUpdate = async (id) => {
     console.log(id);
 
     try {
@@ -84,8 +89,7 @@ const Dashboard = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }
-
+  };
 
   if (session.status === "authenticated") {
     return (
@@ -94,11 +98,20 @@ const Dashboard = () => {
           {isLoading
             ? "Loading..."
             : data?.map((post) => (
-                <div className={style.post} key={post.id} onClick={()=>handleUpdate(post._id)}>
+                <div
+                  className={style.post}
+                  key={post._id}
+                >
                   <div className={style.imgContainer}>
                     <Image src={post.img} width={200} height={200} alt="" />
                   </div>
                   <h2 className={style.postTitle}>{post.title}</h2>
+                  <span
+                    className={style.update}
+                    onClick={() => handleUpdate(post._id)}
+                  >
+                    Update
+                  </span>
                   <span
                     className={style.delete}
                     onClick={() => handleDelete(post._id)}
@@ -109,21 +122,25 @@ const Dashboard = () => {
               ))}
         </div>
         <form className={style.new} onSubmit={handleSubmit}>
-          <h1>Add New Post</h1>
-          <input type="text" placeholder="Title" className={style.input}/>
+          <h1>{postData ? "Update Post" : "Add New Post"}</h1>
+          <input type="text" placeholder="Title" className={style.input} defaultValue={postData?.title || ''}/>
           <input
             type="text"
             placeholder="Description"
             className={style.input}
+            defaultValue={postData?.desc || ''}
           />
-          <input type="text" placeholder="Image" className={style.input} />
+          <input type="text" placeholder="Image" className={style.input} defaultValue={postData?.img || ''}/>
           <textarea
             placeholder="Content"
             className={style.textArea}
             cols="30"
             rows="10"
+            defaultValue={postData?.content || ''}
           ></textarea>
-          <button className={style.button}>Send</button>
+          <button className={style.button}>
+            {postData ? "Update" : "Send"}
+          </button>
         </form>
       </div>
     );
